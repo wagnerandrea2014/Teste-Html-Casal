@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <title>Finanças do Casal 💑</title>
+    <link rel="manifest" href="data:application/manifest+json,{ \"name\":\"Finanças do Casal\", \"short_name\":\"CasalFinanças\", \"start_url\":\"/\", \"display\":\"standalone\", \"theme_color\":\"#00bfa5\", \"background_color\":\"#ffffff\" }">
+    <meta name="theme-color" content="#00bfa5">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        :root {
+            --primary: #00bfa5;
+            --primary-dark: #009688;
+            --bg: #f0f2f5;
+            --card: #ffffff;
+            --text: #2c3e50;
+            --text-light: #7f8c8d;
+            --border: #e0e0e0;
+            --danger: #e74c3c;
+            --warning: #f39c12;
+            --success: #27ae60;
+        }
+        body.dark {
+            --bg: #121212;
+            --card: #1e1e2f;
+            --text: #e0e0e0;
+            --text-light: #aaa;
+            --border: #2c2c3a;
+            --danger: #ef5350;
+            --warning: #ffb74d;
+            --success: #66bb6a;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: var(--bg);
+            margin: 0;
+            padding: 16px;
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        /* Tela de login – 100% mobile */
+        .auth-container {
+            width: 100%;
+            max-width: 380px;
+            margin: 0 auto;
+            background: var(--card);
+            border-radius: 32px;
+            padding: 32px 24px;
+            text-align: center;
+            box-shadow: 0 12px 30px rgba(0,0,0,0.1);
+        }
+        .auth-container h2 {
+            font-size: 1.8rem;
+            margin: 0 0 8px;
+            color: var(--primary);
+        }
+        .auth-container p {
+            font-size: 0.95rem;
+            color: var(--text-light);
+            margin-bottom: 28px;
+        }
+        #google-login-btn {
+            background: #4285f4;
+            color: white;
+            border: none;
+            border-radius: 48px;
+            padding: 14px 20px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            width: 100%;
+            cursor: pointer;
+            transition: 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        #google-login-btn:active {
+            transform: scale(0.97);
+            background: #3367d6;
+        }
+        .auth-footer {
+            font-size: 0.75rem;
+            color: var(--text-light);
+            margin-top: 28px;
+        }
+        /* App principal – responsivo para mobile */
+        .app-container {
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+            display: none;
+            flex-direction: column;
+            gap: 20px;
+            padding-bottom: 20px;
+        }
+        /* Demais estilos (mesmos do app, adaptados para mobile) */
+        .dashboard, .charts-row { display: flex; flex-wrap: wrap; gap: 12px; }
+        .card { background: var(--card); border-radius: 20px; padding: 16px; flex: 1; min-width: 140px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        .card h3 { font-size: 0.8rem; margin: 0 0 6px; color: var(--text-light); }
+        .card h2 { font-size: 1.3rem; margin: 0; color: var(--primary); }
+        .form-section, .history-section, .reminders-section { background: var(--card); border-radius: 20px; padding: 16px; }
+        .form-row { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 12px; }
+        .input-group { flex: 1; min-width: 120px; }
+        .input-group label { font-size: 0.7rem; margin-bottom: 4px; color: var(--text-light); }
+        input, select, textarea { padding: 10px; border-radius: 14px; font-size: 0.9rem; }
+        button { border-radius: 40px; padding: 10px 16px; font-weight: 600; font-size: 0.9rem; }
+        .month-control { display: flex; flex-wrap: wrap; gap: 8px; justify-content: space-between; align-items: center; }
+        .month-control button, .month-control input { font-size: 0.8rem; padding: 8px 12px; }
+        table { font-size: 0.75rem; }
+        th, td { padding: 8px 4px; }
+        .theme-toggle { position: fixed; bottom: 16px; right: 16px; width: 44px; height: 44px; border-radius: 50%; background: var(--primary); display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 2px 10px rgba(0,0,0,0.2); z-index: 100; }
+        .loading { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: none; justify-content: center; align-items: center; z-index: 1000; color: white; font-size: 1rem; }
+        /* Ajustes para evitar rolagem horizontal */
+        img, canvas, table { max-width: 100%; }
+        .progress-bar { height: 6px; }
+    </style>
+</head>
+<body>
+
+<div id="auth-container" class="auth-container">
+    <h2>💑 Finanças do Casal</h2>
+    <p>Organizem gastos, metas e parcelas juntos</p>
+    <button id="google-login-btn">
+        🔑 Entrar com Google
+    </button>
+    <div class="auth-footer">Seu parceiro terá acesso aos mesmos dados automaticamente</div>
+</div>
+
+<div id="app-container" class="app-container">
+    <!-- cabeçalho resumido para mobile -->
+    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+        <h1 style="font-size: 1.5rem; margin:0;">💰 Casal Finanças</h1>
+        <div style="display: flex; gap: 8px;">
+            <span id="user-email" style="background: var(--primary); padding: 4px 10px; border-radius: 40px; font-size: 0.7rem;"></span>
+            <button id="logout-btn" class="btn-danger" style="background: var(--danger); padding: 6px 12px;">Sair</button>
+        </div>
+    </div>
+
+    <div class="dashboard">
+        <div class="card"><h3>🧑 Meu gasto</h3><h2 id="meu-gasto">R$ 0,00</h2></div>
+        <div class="card"><h3>👩 Gasto dela</h3><h2 id="gasto-dela">R$ 0,00</h2></div>
+        <div class="card"><h3>⚖️ Saldo</h3><h2 id="saldo">R$ 0,00</h2></div>
+        <div class="card"><h3>🎯 Meta</h3><h2 id="meta-progress">0%</h2><div class="progress-bar"><div id="meta-fill" class="progress-fill"></div></div></div>
+    </div>
+
+    <div class="month-control">
+        <div style="display: flex; gap: 6px;"><button id="prev-month">◀</button><input type="month" id="month-year"><button id="next-month">▶</button><button id="filter-month" style="background:#2c3e50;">Filtrar</button></div>
+        <div style="display: flex; gap: 6px;"><button id="export-csv-btn" class="btn-outline">📎 CSV</button><button id="quick-expense-btn" class="btn-outline">⚡ Rápida</button></div>
+    </div>
+
+    <div class="charts-row">
+        <div class="card" style="flex:2"><canvas id="categoryChart" width="300" height="200"></canvas></div>
+        <div class="card" style="flex:1"><canvas id="compareChart" width="150" height="200"></canvas></div>
+    </div>
+
+    <div class="form-section">
+        <h3>📌 Orçamento por categoria</h3>
+        <div id="budget-list"></div>
+        <div style="display: flex; gap: 8px; margin-top: 10px;"><input type="text" id="new-budget-cat" placeholder="Categoria" style="flex:2"><input type="number" id="new-budget-value" placeholder="R$" step="0.01" style="flex:1"><button id="add-budget-btn">Definir</button></div>
+    </div>
+
+    <div class="reminders-section">
+        <h3>📅 Próximas parcelas</h3>
+        <ul id="upcoming-installments" style="list-style: none; padding: 0; display: flex; flex-wrap: wrap; gap: 8px;"></ul>
+    </div>
+
+    <div class="form-section">
+        <h3>➕ Adicionar despesa</h3>
+        <form id="expense-form">
+            <div class="form-row">
+                <div class="input-group"><label>Descrição</label><input type="text" id="descricao" required></div>
+                <div class="input-group"><label>Valor total</label><input type="number" id="valor-total" step="0.01" required></div>
+                <div class="input-group"><label>Parcelas</label><input type="number" id="parcelas" value="1" min="1"></div>
+                <div class="input-group"><label>Data 1ª</label><input type="date" id="start-date"></div>
+            </div>
+            <div class="form-row">
+                <div class="input-group"><label>Quem pagou?</label><select id="paid-by"><option value="me">Eu</option><option value="her">Ela</option><option value="both">Dividido</option></select></div>
+                <div class="input-group"><label>Divisão</label><select id="split-type"><option value="50-50">50/50</option><option value="custom-percent">% custom</option></select></div>
+                <div class="input-group"><label>% p/ mim</label><input type="number" id="custom-split" step="1" style="display:none;"></div>
+                <div class="input-group"><label>Categoria</label><input type="text" id="categoria" list="categorias-sugeridas"></div>
+                <datalist id="categorias-sugeridas"><option>Alimentação</option><option>Moradia</option><option>Lazer</option><option>Transporte</option><option>Saúde</option></datalist>
+            </div>
+            <div class="form-row">
+                <div class="input-group"><label>Recorrente?</label><select id="recorrente"><option value="none">Não</option><option value="monthly">Mensal</option></select></div>
+                <div class="input-group"><label>Observação</label><input type="text" id="observacao"></div>
+            </div>
+            <div style="display: flex; gap: 8px;"><button type="button" id="add-expense-btn">💾 Salvar</button><button type="button" id="cancel-edit-btn">✖️ Cancelar</button></div>
+            <div id="preview-division" style="margin-top: 8px; font-size: 0.7rem;"></div>
+        </form>
+    </div>
+
+    <div class="history-section">
+        <h3>📋 Histórico</h3>
+        <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px;">
+            <input type="text" id="filter-desc" placeholder="Filtrar">
+            <select id="filter-category"><option value="">Todas cats</option></select>
+            <select id="filter-payer"><option value="">Todos</option><option value="me">Eu</option><option value="her">Ela</option></select>
+            <button id="clear-filters">Limpar</button>
+        </div>
+        <div style="overflow-x: auto;">
+            <table style="min-width: 500px;">
+                <thead><tr><th>Descrição</th><th>Total</th><th>Parc</th><th>Parc.Mês</th><th>Pagador</th><th>Ações</th></tr></thead>
+                <tbody id="tabela-historico"></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<div id="loading-overlay" class="loading">⏳ Carregando...</div>
+<div class="theme-toggle" id="theme-toggle">🌓</div>
+
+<script type="module">
+    // Firebase config (suas credenciais)
+    const firebaseConfig = {
+        apiKey: "AIzaSyD0P8GciuV_TvZXtkIQbZLOWtcq_EMKbXo",
+        authDomain: "gestao-casal.firebaseapp.com",
+        projectId: "gestao-casal",
+        storageBucket: "gestao-casal.firebasestorage.app",
+        messagingSenderId: "588977469279",
+        appId: "1:588977469279:web:113cacee18c2acdc0e68ea",
+        measurementId: "G-DFDX6Q8GWW"
+    };
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { getFirestore, collection, addDoc, query, where, getDocs, updateDoc, deleteDoc, doc, orderBy, Timestamp, setDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    const provider = new GoogleAuthProvider();
+    const COUPLE_ID = "coupleData";
+    const expensesRef = () => collection(db, `shared/${COUPLE_ID}/expenses`);
+    const budgetsRef = () => collection(db, `shared/${COUPLE_ID}/budgets`);
+    const recurringRef = () => collection(db, `shared/${COUPLE_ID}/recurring`);
+    let currentUser = null, currentMonth = new Date().getMonth(), currentYear = new Date().getFullYear(), allExpenses = [], currentDisplayExpenses = [], editingDocId = null, categoriesBudget = {}, categoryChart, compareChart;
+    const formatMoney = (val) => val.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+    function calculateMonthlyShare(exp) { const pt = exp.valorTotal / exp.parcelas; if (exp.splitType === '50-50') return { p1: pt/2, p2: pt/2 }; if (exp.splitType === 'custom-percent') { const perc = exp.customPercent || 50; return { p1: pt * (perc/100), p2: pt * ((100-perc)/100) }; } return { p1: pt/2, p2: pt/2 }; }
+    async function handleRecurringExpenses() { const targetMonth = `${currentYear}-${String(currentMonth+1).padStart(2,'0')}`; const templatesSnap = await getDocs(recurringRef()); for (const docSnap of templatesSnap.docs) { const t = docSnap.data(); const existing = await getDocs(query(expensesRef(), where('descricao', '==', t.descricao), where('installmentMonths', 'array-contains', targetMonth))); if (existing.empty) { const start = new Date(currentYear, currentMonth, 1); const installmentMonths = []; for (let i=0; i<t.parcelas; i++) { const due = new Date(start); due.setMonth(start.getMonth()+i); installmentMonths.push(`${due.getFullYear()}-${String(due.getMonth()+1).padStart(2,'0')}`); } await addDoc(expensesRef(), { descricao: t.descricao, valorTotal: t.valorTotal, parcelas: t.parcelas, startDate: Timestamp.fromDate(start), paidBy: t.paidBy, splitType: t.splitType, customPercent: t.customPercent, categoria: t.categoria, installmentMonths, observacao: t.observacao || '', createdAt: Timestamp.now(), updatedAt: Timestamp.now(), recorrenteTemplate: docSnap.id }); } } }
+    async function loadBudgets() { const snap = await getDocs(budgetsRef()); categoriesBudget = {}; snap.forEach(d => { categoriesBudget[d.id] = d.data().limit; }); renderBudgets(); }
+    async function saveBudget(category, limit) { if (!currentUser) return; await setDoc(doc(budgetsRef(), category), { limit }); await loadBudgets(); }
+    function renderBudgets() { const budgetListDiv = document.getElementById('budget-list'); budgetListDiv.innerHTML = ''; for (let [cat, limit] of Object.entries(categoriesBudget)) { const gasto = currentDisplayExpenses.filter(e => e.categoria === cat).reduce((acc, e) => { const { p1, p2 } = calculateMonthlyShare(e); return acc + p1 + p2; }, 0); const percent = (gasto / limit) * 100; const over = gasto > limit; budgetListDiv.innerHTML += `<div class="budget-item"><div style="display:flex; justify-content:space-between"><span>${cat}</span><span class="${over ? 'over-budget' : ''}">${formatMoney(gasto)} / ${formatMoney(limit)}</span></div><div class="progress-bar"><div class="progress-fill" style="width:${Math.min(percent,100)}%; background:${over ? 'var(--danger)' : 'var(--primary)'}"></div></div>${over ? '<small style="color:var(--danger)">⚠️ Estourou!</small>' : ''}<button class="delete-budget" data-cat="${cat}" style="background:transparent; color:var(--danger); font-size:10px;">❌</button></div>`; } document.querySelectorAll('.delete-budget').forEach(btn => btn.addEventListener('click', async () => { await deleteDoc(doc(budgetsRef(), btn.dataset.cat)); await loadBudgets(); })); }
+    async function refreshDashboard() { if (!currentUser) return; document.getElementById('loading-overlay').style.display = 'flex'; try { await handleRecurringExpenses(); const targetMonth = `${currentYear}-${String(currentMonth+1).padStart(2,'0')}`; const q = query(expensesRef(), where('installmentMonths', 'array-contains', targetMonth), orderBy('createdAt', 'desc')); const snap = await getDocs(q); allExpenses = snap.docs.map(d => ({ id: d.id, ...d.data() })); currentDisplayExpenses = [...allExpenses]; applyFilters(); let totalMe = 0, totalHer = 0, paidByMe = 0, paidByHer = 0; for (const exp of allExpenses) { const { p1, p2 } = calculateMonthlyShare(exp); totalMe += p1; totalHer += p2; const vp = exp.valorTotal / exp.parcelas; if (exp.paidBy === 'me') paidByMe += vp; else if (exp.paidBy === 'her') paidByHer += vp; else if (exp.paidBy === 'both') { paidByMe += p1; paidByHer += p2; } } const balance = paidByMe - totalMe; document.getElementById('meu-gasto').innerText = formatMoney(totalMe); document.getElementById('gasto-dela').innerText = formatMoney(totalHer); const saldoEl = document.getElementById('saldo'); if (balance > 0) saldoEl.innerText = `Ela te deve ${formatMoney(balance)}`; else if (balance < 0) saldoEl.innerText = `Você deve ${formatMoney(-balance)}`; else saldoEl.innerText = `Contas em dia!`; const metaEconomia = 500; const totalGasto = totalMe + totalHer; let progresso = Math.max(0, (metaEconomia - totalGasto) / metaEconomia * 100); progresso = Math.min(100, progresso); document.getElementById('meta-progress').innerText = `${Math.round(progresso)}%`; document.getElementById('meta-fill').style.width = `${progresso}%`; updateUpcomingInstallments(); updateCharts(); await loadBudgets(); renderHistory(); const uniqueCats = [...new Set(allExpenses.map(e => e.categoria).filter(c => c))]; const filterCategory = document.getElementById('filter-category'); filterCategory.innerHTML = '<option value="">Todas categorias</option>' + uniqueCats.map(c => `<option>${c}</option>`).join(''); } catch (err) { console.error(err); Swal.fire("Erro", "Falha ao carregar dados. Verifique regras do Firestore.", "error"); } finally { document.getElementById('loading-overlay').style.display = 'none'; } }
+    function updateUpcomingInstallments() { const upcomingList = document.getElementById('upcoming-installments'); upcomingList.innerHTML = ''; const today = new Date(); const threeMonthsLater = new Date(); threeMonthsLater.setMonth(today.getMonth() + 3); const futureParcels = []; for (const exp of allExpenses) { const startDate = exp.startDate.toDate(); for (let i=0; i<exp.parcelas; i++) { const due = new Date(startDate); due.setMonth(startDate.getMonth() + i); if (due > today && due <= threeMonthsLater) { const { p1, p2 } = calculateMonthlyShare(exp); futureParcels.push({ desc: exp.descricao, date: due, value: p1 + p2 }); } } } futureParcels.sort((a,b)=>a.date-b.date); for (let p of futureParcels.slice(0,6)) upcomingList.innerHTML += `<li style="background:var(--border); padding:6px 10px; border-radius:20px; font-size:0.75rem;">📌 ${p.desc} - ${formatMoney(p.value)} (${p.date.toLocaleDateString()})</li>`; }
+    function updateCharts() { const catMap = new Map(); for (const exp of allExpenses) { const { p1, p2 } = calculateMonthlyShare(exp); const total = p1 + p2; const cat = exp.categoria || "Outros"; catMap.set(cat, (catMap.get(cat) || 0) + total); } const labels = [...catMap.keys()]; const data = [...catMap.values()]; if (categoryChart) categoryChart.destroy(); const ctx = document.getElementById('categoryChart').getContext('2d'); categoryChart = new Chart(ctx, { type: 'pie', data: { labels, datasets: [{ data, backgroundColor: ['#00bfa5','#3498db','#e74c3c','#f39c12','#9b59b6','#2ecc71'] }] } }); let totalMe=0, totalHer=0; allExpenses.forEach(exp => { const {p1,p2}=calculateMonthlyShare(exp); totalMe+=p1; totalHer+=p2; }); if (compareChart) compareChart.destroy(); const ctx2 = document.getElementById('compareChart').getContext('2d'); compareChart = new Chart(ctx2, { type: 'bar', data: { labels: ['Eu', 'Ela'], datasets: [{ data: [totalMe, totalHer], backgroundColor: ['#00bfa5','#e84393'] }] } }); }
+    function renderHistory() { const tbody = document.getElementById('tabela-historico'); tbody.innerHTML = ''; for (const exp of currentDisplayExpenses) { const { p1, p2 } = calculateMonthlyShare(exp); const row = document.createElement('tr'); row.innerHTML = `<td><strong>${exp.descricao}</strong><br><small>${exp.observacao || ''}</small></td><td>${formatMoney(exp.valorTotal)}</td><td>${exp.parcelas}x</td><td>${formatMoney(p1 + p2)}</td><td>${exp.paidBy === 'me' ? '🧑' : (exp.paidBy === 'her' ? '👩' : '🤝')}</td><td><button class="edit-expense" data-id="${exp.id}">✏️</button> <button class="delete-expense" data-id="${exp.id}">🗑️</button></td>`; tbody.appendChild(row); } document.querySelectorAll('.edit-expense').forEach(btn => btn.addEventListener('click', () => startEditExpense(btn.dataset.id))); document.querySelectorAll('.delete-expense').forEach(btn => btn.addEventListener('click', async () => { const result = await Swal.fire({ title: 'Confirmar', text: 'Remover?', icon: 'warning', showCancelButton: true }); if (result.isConfirmed) await deleteExpense(btn.dataset.id); })); }
+    function applyFilters() { let filtered = [...allExpenses]; const desc = document.getElementById('filter-desc').value.toLowerCase(); const cat = document.getElementById('filter-category').value; const payer = document.getElementById('filter-payer').value; if (desc) filtered = filtered.filter(e => e.descricao.toLowerCase().includes(desc)); if (cat) filtered = filtered.filter(e => e.categoria === cat); if (payer) filtered = filtered.filter(e => e.paidBy === payer); currentDisplayExpenses = filtered; renderHistory(); renderBudgets(); }
+    async function startEditExpense(id) { const exp = allExpenses.find(e => e.id === id); if (!exp) return; editingDocId = id; document.getElementById('descricao').value = exp.descricao; document.getElementById('valor-total').value = exp.valorTotal; document.getElementById('parcelas').value = exp.parcelas; document.getElementById('start-date').value = exp.startDate.toDate().toISOString().slice(0,10); document.getElementById('paid-by').value = exp.paidBy; document.getElementById('split-type').value = exp.splitType; document.getElementById('custom-split').value = exp.customPercent || ''; document.getElementById('categoria').value = exp.categoria || ''; document.getElementById('recorrente').value = exp.recorrenteTemplate ? 'monthly' : 'none'; document.getElementById('observacao').value = exp.observacao || ''; document.getElementById('add-expense-btn').textContent = '✏️ Atualizar'; document.getElementById('cancel-edit-btn').style.display = 'inline-block'; }
+    async function deleteExpense(id) { if (!currentUser) return; document.getElementById('loading-overlay').style.display = 'flex'; try { await deleteDoc(doc(expensesRef(), id)); await refreshDashboard(); } catch(e) { Swal.fire("Erro","Não foi possível excluir","error"); } finally { document.getElementById('loading-overlay').style.display = 'none'; } }
+    async function saveExpense() { if (!currentUser) return; const descricao = document.getElementById('descricao').value.trim(); const valorTotal = parseFloat(document.getElementById('valor-total').value); const parcelas = parseInt(document.getElementById('parcelas').value); const startDate = new Date(document.getElementById('start-date').value); if (isNaN(startDate.getTime())) { Swal.fire("Data inválida"); return; } const paidBy = document.getElementById('paid-by').value; const splitType = document.getElementById('split-type').value; let customPercent = null; if (splitType === 'custom-percent') { customPercent = parseFloat(document.getElementById('custom-split').value); if (isNaN(customPercent) || customPercent <= 0 || customPercent >= 100) { Swal.fire("Percentual entre 1 e 99"); return; } } if (!descricao || valorTotal <= 0 || parcelas < 1) { Swal.fire("Preencha corretamente"); return; } const installmentMonths = []; for (let i=0; i<parcelas; i++) { const due = new Date(startDate); due.setMonth(startDate.getMonth() + i); installmentMonths.push(`${due.getFullYear()}-${String(due.getMonth()+1).padStart(2,'0')}`); } const expenseData = { descricao, valorTotal, parcelas, startDate: Timestamp.fromDate(startDate), paidBy, splitType, customPercent, categoria: document.getElementById('categoria').value.trim() || "Geral", installmentMonths, observacao: document.getElementById('observacao').value, createdAt: Timestamp.now(), updatedAt: Timestamp.now() }; const isRecurring = document.getElementById('recorrente').value !== 'none'; document.getElementById('loading-overlay').style.display = 'flex'; try { if (editingDocId) { await updateDoc(doc(expensesRef(), editingDocId), expenseData); } else { const newRef = await addDoc(expensesRef(), expenseData); if (isRecurring) { await addDoc(recurringRef(), { ...expenseData, templateFor: newRef.id }); } } document.getElementById('expense-form').reset(); document.getElementById('parcelas').value = 1; document.getElementById('start-date').valueAsDate = new Date(); document.getElementById('add-expense-btn').textContent = '💾 Salvar'; document.getElementById('cancel-edit-btn').style.display = 'none'; editingDocId = null; await refreshDashboard(); } catch(e) { Swal.fire("Erro","Falha ao salvar","error"); } finally { document.getElementById('loading-overlay').style.display = 'none'; } }
+    function changeMonth(delta) { let nm = currentMonth + delta, ny = currentYear; if (nm < 0) { nm = 11; ny--; } else if (nm > 11) { nm = 0; ny++; } currentMonth = nm; currentYear = ny; document.getElementById('month-year').value = `${currentYear}-${String(currentMonth+1).padStart(2,'0')}`; refreshDashboard(); }
+    function exportCSV() { let csvRows = [["Descrição","Valor Total","Parcelas","Parcela Mês","Pagador","Categoria","Observação"]]; for (let exp of currentDisplayExpenses) { const { p1, p2 } = calculateMonthlyShare(exp); csvRows.push([exp.descricao, exp.valorTotal, exp.parcelas, p1+p2, exp.paidBy, exp.categoria, exp.observacao]); } const csv = csvRows.map(row => row.join(",")).join("\n"); const blob = new Blob([csv], {type: "text/csv"}); const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = `financas_${currentYear}-${currentMonth+1}.csv`; a.click(); }
+    async function quickExpense() { const { value: formValues } = await Swal.fire({ title: 'Despesa rápida', html: `<input id="swal-desc" class="swal2-input" placeholder="Descrição"><input id="swal-valor" type="number" step="0.01" class="swal2-input" placeholder="Valor total"><select id="swal-cat" class="swal2-select"><option>Alimentação</option><option>Lazer</option><option>Moradia</option></select>`, focusConfirm: false, preConfirm: () => ({ desc: document.getElementById('swal-desc').value, valor: parseFloat(document.getElementById('swal-valor').value), cat: document.getElementById('swal-cat').value }) }); if (formValues && formValues.desc && !isNaN(formValues.valor)) { const targetMonth = `${currentYear}-${String(currentMonth+1).padStart(2,'0')}`; await addDoc(expensesRef(), { descricao: formValues.desc, valorTotal: formValues.valor, parcelas: 1, startDate: Timestamp.fromDate(new Date()), paidBy: 'both', splitType: '50-50', categoria: formValues.cat, installmentMonths: [targetMonth], createdAt: Timestamp.now(), updatedAt: Timestamp.now(), observacao: '' }); refreshDashboard(); } }
+    // Eventos e autenticação
+    document.getElementById('google-login-btn').onclick = () => signInWithPopup(auth, provider);
+    document.getElementById('logout-btn').onclick = () => signOut(auth);
+    onAuthStateChanged(auth, async (user) => { if (user) { currentUser = user; document.getElementById('user-email').textContent = user.email; document.getElementById('auth-container').style.display = 'none'; document.getElementById('app-container').style.display = 'flex'; refreshDashboard(); } else { currentUser = null; document.getElementById('auth-container').style.display = 'block'; document.getElementById('app-container').style.display = 'none'; } });
+    document.getElementById('filter-month').addEventListener('click', () => { const [y,m]=document.getElementById('month-year').value.split('-'); currentYear=parseInt(y); currentMonth=parseInt(m)-1; refreshDashboard(); });
+    document.getElementById('prev-month').addEventListener('click', () => changeMonth(-1));
+    document.getElementById('next-month').addEventListener('click', () => changeMonth(1));
+    document.getElementById('add-expense-btn').addEventListener('click', saveExpense);
+    document.getElementById('cancel-edit-btn').addEventListener('click', () => { editingDocId=null; document.getElementById('expense-form').reset(); document.getElementById('add-expense-btn').textContent='💾 Salvar'; document.getElementById('cancel-edit-btn').style.display='none'; document.getElementById('parcelas').value=1; document.getElementById('start-date').valueAsDate=new Date(); });
+    document.getElementById('split-type').addEventListener('change', () => { document.getElementById('custom-split').style.display = document.getElementById('split-type').value === 'custom-percent' ? 'block' : 'none'; });
+    document.getElementById('valor-total').addEventListener('input', () => { const val = parseFloat(document.getElementById('valor-total').value) || 0; const parcelas = parseInt(document.getElementById('parcelas').value) || 1; const pt = val/parcelas; document.getElementById('preview-division').innerText = `Cada pessoa: ${formatMoney(pt/2)}/mês (${parcelas}x)`; });
+    document.getElementById('export-csv-btn').addEventListener('click', exportCSV);
+    document.getElementById('quick-expense-btn').addEventListener('click', quickExpense);
+    document.getElementById('add-budget-btn').addEventListener('click', async () => { const cat = document.getElementById('new-budget-cat').value.trim(); const limit = parseFloat(document.getElementById('new-budget-value').value); if (cat && !isNaN(limit)) await saveBudget(cat, limit); });
+    document.getElementById('filter-desc').addEventListener('input', applyFilters);
+    document.getElementById('filter-category').addEventListener('change', applyFilters);
+    document.getElementById('filter-payer').addEventListener('change', applyFilters);
+    document.getElementById('clear-filters').addEventListener('click', () => { document.getElementById('filter-desc').value=''; document.getElementById('filter-category').value=''; document.getElementById('filter-payer').value=''; applyFilters(); });
+    document.getElementById('start-date').valueAsDate = new Date();
+    document.getElementById('month-year').value = `${currentYear}-${String(currentMonth+1).padStart(2,'0')}`;
+    document.getElementById('custom-split').style.display = 'none';
+    if (localStorage.getItem('darkMode') === 'enabled') document.body.classList.add('dark');
+    document.getElementById('theme-toggle').addEventListener('click', () => { document.body.classList.toggle('dark'); localStorage.setItem('darkMode', document.body.classList.contains('dark') ? 'enabled' : 'disabled'); });
+</script>
+</body>
+</html>
