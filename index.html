@@ -12,7 +12,12 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
         body {
             font-family: 'Inter', sans-serif;
             background: linear-gradient(135deg, #0f172a 0%, #1e1b2e 100%);
@@ -49,7 +54,7 @@
             color: transparent;
             margin-bottom: 1.5rem;
         }
-        .login-card input {
+        .login-card input, .login-card select {
             width: 100%;
             padding: 14px 18px;
             margin-bottom: 16px;
@@ -151,7 +156,9 @@
             -webkit-overflow-scrolling: touch;
             scrollbar-width: none;
         }
-        .swipe-container::-webkit-scrollbar { display: none; }
+        .swipe-container::-webkit-scrollbar {
+            display: none;
+        }
         .swipe-page {
             flex: 0 0 100%;
             scroll-snap-align: start;
@@ -209,8 +216,14 @@
             flex-wrap: wrap;
             gap: 8px;
         }
-        .expense-info, .debtor-info { flex: 1; font-size: 0.85rem; }
-        .expense-date, .debtor-date { font-size: 0.7rem; opacity: 0.7; }
+        .expense-info, .debtor-info {
+            flex: 1;
+            font-size: 0.85rem;
+        }
+        .expense-date, .debtor-date {
+            font-size: 0.7rem;
+            opacity: 0.7;
+        }
         .btn-small {
             padding: 6px 12px;
             font-size: 0.7rem;
@@ -220,7 +233,9 @@
             border-radius: 40px;
             cursor: pointer;
         }
-        .btn-quitar { background: #10b981; }
+        .btn-quitar {
+            background: #10b981;
+        }
         .dashboard-row {
             display: flex;
             flex-wrap: wrap;
@@ -255,7 +270,10 @@
             gap: 12px;
             margin-bottom: 12px;
         }
-        .input-group { flex: 1; min-width: 120px; }
+        .input-group {
+            flex: 1;
+            min-width: 120px;
+        }
         input, select, textarea {
             width: 100%;
             padding: 10px 14px;
@@ -277,10 +295,23 @@
             gap: 8px;
             font-size: 0.85rem;
         }
-        .btn-primary { background: linear-gradient(95deg, #e91e63, #c2185b); color: white; }
-        .btn-secondary { background: rgba(255, 255, 255, 0.1); color: white; border: 1px solid rgba(233, 30, 99, 0.4); }
-        .btn-danger { background: #ef4444; color: white; }
-        .btn-success { background: #10b981; color: white; }
+        .btn-primary {
+            background: linear-gradient(95deg, #e91e63, #c2185b);
+            color: white;
+        }
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(233, 30, 99, 0.4);
+        }
+        .btn-danger {
+            background: #ef4444;
+            color: white;
+        }
+        .btn-success {
+            background: #10b981;
+            color: white;
+        }
         table {
             width: 100%;
             font-size: 0.75rem;
@@ -298,10 +329,21 @@
             flex-wrap: wrap;
             align-items: flex-end;
         }
-        .debtor-form-group .field-name { flex: 3; min-width: 0; }
-        .debtor-form-group .field-value { flex: 1; min-width: 0; }
-        .debtor-form-group .field-date { flex: 1.2; min-width: 0; }
-        .debtor-form-group .field-button { flex: 0 0 auto; }
+        .debtor-form-group .field-name {
+            flex: 3;
+            min-width: 0;
+        }
+        .debtor-form-group .field-value {
+            flex: 1;
+            min-width: 0;
+        }
+        .debtor-form-group .field-date {
+            flex: 1.2;
+            min-width: 0;
+        }
+        .debtor-form-group .field-button {
+            flex: 0 0 auto;
+        }
         .debtor-form-group label {
             font-size: 0.7rem;
             opacity: 0.8;
@@ -309,22 +351,37 @@
             margin-bottom: 4px;
         }
         @media (max-width: 550px) {
-            .debtor-form-group { flex-direction: column; align-items: stretch; }
-            .debtor-form-group .field-button button { margin-top: 8px; width: 100%; }
-            .debtor-item { flex-direction: column; align-items: stretch; }
+            .debtor-form-group {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .debtor-form-group .field-button button {
+                margin-top: 8px;
+                width: 100%;
+            }
+            .debtor-item {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .debtor-item > div:last-child {
+                justify-content: flex-start;
+            }
         }
     </style>
 </head>
 <body>
 
-<!-- TELA DE LOGIN (AUTH) -->
+<!-- TELA DE SELEÇÃO DO PARCEIRO -->
 <div id="login-container" class="login-container">
     <div class="login-card">
         <h2><i class="fas fa-hand-holding-heart"></i> Finanças do Casal</h2>
-        <input type="email" id="login-email" placeholder="E-mail">
-        <input type="password" id="login-password" placeholder="Senha">
-        <button id="login-btn">Entrar</button>
-        <div id="login-error" style="color:#ff6b6b; text-align:center; margin-top:12px;"></div>
+        <input type="text" id="name1" placeholder="Nome do Parceiro 1 (ex: Wagner)">
+        <input type="text" id="name2" placeholder="Nome do Parceiro 2 (ex: Andrea)">
+        <select id="current-user-select">
+            <option value="">-- Selecione quem está usando --</option>
+        </select>
+        <button id="enter-app-btn">Entrar no app</button>
+        <div style="margin-top: 16px; font-size: 0.7rem; text-align: center;">Os dados são sincronizados em tempo real</div>
     </div>
 </div>
 
@@ -386,7 +443,7 @@
             </div>
         </div>
 
-        <!-- Página 1: Gastos do Parceiro 1 (me) -->
+        <!-- Página 1: Gastos de Parceiro 1 -->
         <div class="swipe-page" data-page="1" id="page-partner1">
             <div class="card">
                 <div class="card-title"><i class="fas fa-user"></i> Gastos de <span id="partner1-name-label"></span></div>
@@ -401,7 +458,7 @@
             </div>
         </div>
 
-        <!-- Página 2: Gastos do Parceiro 2 (her) -->
+        <!-- Página 2: Gastos de Parceiro 2 -->
         <div class="swipe-page" data-page="2" id="page-partner2">
             <div class="card">
                 <div class="card-title"><i class="fas fa-user"></i> Gastos de <span id="partner2-name-label"></span></div>
@@ -496,11 +553,12 @@
             </div>
         </div>
 
-        <!-- Página 6: Devedores -->
+        <!-- Página 6: Devedores (terceiros) -->
         <div class="swipe-page" data-page="6">
             <div class="card">
                 <div class="card-title"><i class="fas fa-hand-holding-usd"></i> Devedores (terceiros)</div>
-                <div id="debtors-list"></div>
+                <div id="debtors-list" class="debtors-grid"></div>
+                
                 <div class="debtor-form-group">
                     <div class="field-name">
                         <label>Nome completo</label>
@@ -527,7 +585,7 @@
 </div>
 
 <script>
-    // Firebase config (mantida a original)
+    // Firebase config
     const firebaseConfig = {
         apiKey: "AIzaSyD0P8GciuV_TvZXtkIQbZLOWtcq_EMKbXo",
         authDomain: "gestao-casal.firebaseapp.com",
@@ -538,13 +596,9 @@
         measurementId: "G-DFDX6Q8GWW"
     };
     firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth();
     const db = firebase.firestore();
+    const auth = firebase.auth();
 
-    // UIDs autorizados (ATUALIZADO)
-    const ALLOWED_UIDS = ["UplHMkpHm0hpG8fSE3BlsgSurPA3", "GF71s9hUnbVVspnP6RiGk5lijNL2"];
-
-    // Coleções (mesmo documento para ambos)
     const COUPLE_ID = "coupleData";
     const expensesRef = db.collection(`shared/${COUPLE_ID}/expenses`);
     const budgetsRef = db.collection(`shared/${COUPLE_ID}/budgets`);
@@ -553,8 +607,7 @@
     const namesRef = db.collection(`shared/${COUPLE_ID}/settings`).doc("names");
     const debtorsRef = db.collection(`shared/${COUPLE_ID}/debtors`);
 
-    let currentUser = null;
-    let currentUserId = null;   // 'me' ou 'her' (definido após carregar os nomes)
+    let currentUserId = null;
     let partnerName = { me: "", her: "" };
     let currentMonth = new Date().getMonth();
     let currentYear = new Date().getFullYear();
@@ -605,9 +658,9 @@
         return months;
     }
 
-    // Geração de despesas recorrentes para um determinado mês (chamada também ao mudar de mês)
     async function generateRecurringForMonth(targetMonth) {
-        if (!currentUser) return;
+        // Evita execução duplicada se já estiver gerando
+        if (!recurringTemplates.length) return;
         for (const template of recurringTemplates) {
             const q = expensesRef.where('recurringTemplateId', '==', template.id).where('installmentMonths', 'array-contains', targetMonth);
             const snap = await q.get();
@@ -615,8 +668,15 @@
                 const firstDay = new Date(currentYear, currentMonth, 1);
                 const newInstallments = generateInstallmentMonths(firstDay.toISOString().slice(0,10), template.parcelas);
                 await expensesRef.add({
-                    ...template,
+                    descricao: template.descricao,
+                    valorTotal: template.valorTotal,
+                    parcelas: template.parcelas,
                     startDate: firstDay.toISOString().slice(0,10),
+                    paidBy: template.paidBy,
+                    splitType: template.splitType,
+                    customPercent: template.customPercent,
+                    categoria: template.categoria,
+                    observacao: template.observacao + " (recorrente)",
                     installmentMonths: newInstallments,
                     createdAt: firebase.firestore.FieldValue.serverTimestamp(),
                     updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
@@ -709,12 +769,19 @@
                 </div>
             `;
         }).join('');
+
         document.querySelectorAll('.btn-quitar').forEach(btn => {
             btn.addEventListener('click', async (e) => {
                 const id = btn.getAttribute('data-id');
                 const nome = btn.getAttribute('data-name');
                 const valor = parseFloat(btn.getAttribute('data-value'));
-                const result = await Swal.fire({ title: 'Quitar dívida', text: `Confirmar recebimento de ${formatMoney(valor)} de ${nome}?`, icon: 'question', showCancelButton: true, confirmButtonText: 'Sim, quitar' });
+                const result = await Swal.fire({
+                    title: 'Quitar dívida',
+                    text: `Confirmar recebimento de ${formatMoney(valor)} de ${nome}?`,
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonText: 'Sim, quitar'
+                });
                 if (result.isConfirmed) {
                     await debtorsRef.doc(id).delete();
                     Swal.fire('Quitado!', `Valor de ${formatMoney(valor)} recebido.`, 'success');
@@ -724,7 +791,12 @@
         document.querySelectorAll('.btn-small[data-action="delete"]').forEach(btn => {
             btn.addEventListener('click', async (e) => {
                 const id = btn.getAttribute('data-id');
-                const result = await Swal.fire({ title: 'Excluir devedor', text: 'Remover permanentemente este registro?', icon: 'warning', showCancelButton: true });
+                const result = await Swal.fire({
+                    title: 'Excluir devedor',
+                    text: 'Remover permanentemente este registro?',
+                    icon: 'warning',
+                    showCancelButton: true
+                });
                 if (result.isConfirmed) {
                     await debtorsRef.doc(id).delete();
                     Swal.fire('Removido!', '', 'success');
@@ -746,14 +818,21 @@
             Swal.fire('Erro', 'Preencha nome e valor válido.', 'error');
             return;
         }
-        if (!dataHora) dataHora = new Date().toISOString().slice(0,10);
+        if (!dataHora) {
+            dataHora = new Date().toISOString().slice(0,10);
+        }
         const dataObj = new Date(dataHora);
         if (isNaN(dataObj.getTime())) {
             Swal.fire('Erro', 'Data inválida.', 'error');
             return;
         }
         const isoString = dataObj.toISOString();
-        await debtorsRef.add({ nome, valor, dataHora: isoString, criadoEm: firebase.firestore.FieldValue.serverTimestamp() });
+        await debtorsRef.add({
+            nome: nome,
+            valor: valor,
+            dataHora: isoString,
+            criadoEm: firebase.firestore.FieldValue.serverTimestamp()
+        });
         document.getElementById('new-debtor-name').value = '';
         document.getElementById('new-debtor-value').value = '';
         document.getElementById('new-debtor-date').value = '';
@@ -774,9 +853,9 @@
     }
 
     async function updateDashboard() {
-        if (!currentUser) return;
+        if (!currentUserId) return;
         const targetMonth = `${currentYear}-${String(currentMonth+1).padStart(2,'0')}`;
-        // CORREÇÃO: gera recorrências ao atualizar o dashboard (ao mudar de mês ou login)
+        // Gera recorrências para o mês atual ANTES de carregar as despesas
         await generateRecurringForMonth(targetMonth);
         
         const monthExpenses = allExpenses.filter(exp => exp.installmentMonths && exp.installmentMonths.includes(targetMonth));
@@ -859,6 +938,7 @@
         if (categoryChart) categoryChart.destroy();
         const ctx = document.getElementById('categoryChart').getContext('2d');
         categoryChart = new Chart(ctx, { type: 'pie', data: { labels, datasets: [{ data, backgroundColor: ['#e91e63','#ff6b9d','#c2185b','#f48fb1','#f06292','#ec407a'] }] } });
+        
         let totalMe=0, totalHer=0;
         expensesList.forEach(exp => { const {p1,p2}=calculateMonthlyShare(exp); totalMe+=p1; totalHer+=p2; });
         if (compareChart) compareChart.destroy();
@@ -877,6 +957,7 @@
             const percent = (gasto / limit) * 100;
             const over = gasto > limit;
             const div = document.createElement('div');
+            div.className = 'budget-item';
             div.innerHTML = `<div style="display:flex; justify-content:space-between"><span>${cat}</span><span>${formatMoney(gasto)} / ${formatMoney(limit)}</span></div>
             <div class="progress-bar"><div class="progress-fill" style="width:${Math.min(percent,100)}%; background:${over ? '#ef4444' : '#e91e63'}"></div></div>
             ${over ? '<small style="color:#ef4444">⚠️ Estourou!</small>' : ''}
@@ -884,7 +965,9 @@
             budgetListDiv.appendChild(div);
         }
         document.querySelectorAll('.delete-budget').forEach(btn => {
-            btn.addEventListener('click', async () => { await budgetsRef.doc(btn.dataset.cat).delete(); });
+            btn.addEventListener('click', async () => {
+                await budgetsRef.doc(btn.dataset.cat).delete();
+            });
         });
     }
 
@@ -1013,8 +1096,9 @@
         let nm = currentMonth + delta, ny = currentYear;
         if (nm < 0) { nm = 11; ny--; }
         else if (nm > 11) { nm = 0; ny++; }
-        currentMonth = nm; currentYear = ny;
-        await updateDashboard(); // updateDashboard já chama generateRecurringForMonth internamente
+        currentMonth = nm;
+        currentYear = ny;
+        await updateDashboard(); // updateDashboard já chama generateRecurringForMonth
     }
 
     function exportCSV() {
@@ -1115,12 +1199,8 @@
             if (doc.exists) {
                 const data = doc.data();
                 if (data.name1 && data.name2) {
-                    // Para simplificar, vamos assumir que o primeiro nome é o 'me' (usuário atual)
-                    // e o segundo é o 'her'. Como ambos usam a mesma conta, os nomes são os mesmos.
-                    partnerName.me = data.name1;
-                    partnerName.her = data.name2;
-                    // O currentUserId é definido manualmente? Vamos usar 'me' como padrão para o usuário logado.
-                    if (!currentUserId) currentUserId = 'me';
+                    partnerName.me = currentUserId === 'me' ? data.name1 : data.name2;
+                    partnerName.her = currentUserId === 'me' ? data.name2 : data.name1;
                 }
             } else {
                 partnerName.me = "Você";
@@ -1133,6 +1213,56 @@
             debtors = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
             renderDebtors();
         });
+    }
+
+    function loadSavedLogin() {
+        const savedName1 = localStorage.getItem('couple_name1');
+        const savedName2 = localStorage.getItem('couple_name2');
+        const savedLastUser = localStorage.getItem('couple_last_user');
+        if (savedName1) document.getElementById('name1').value = savedName1;
+        if (savedName2) document.getElementById('name2').value = savedName2;
+        if (savedName1 && savedName2) updateUserSelect();
+        if (savedLastUser && document.getElementById('current-user-select').querySelector(`option[value="${savedLastUser}"]`)) {
+            document.getElementById('current-user-select').value = savedLastUser;
+        }
+    }
+
+    function saveLoginData(name1, name2, selectedUser) {
+        localStorage.setItem('couple_name1', name1);
+        localStorage.setItem('couple_name2', name2);
+        localStorage.setItem('couple_last_user', selectedUser);
+    }
+
+    function updateUserSelect() {
+        const name1 = document.getElementById('name1').value.trim();
+        const name2 = document.getElementById('name2').value.trim();
+        const select = document.getElementById('current-user-select');
+        select.innerHTML = '<option value="">-- Selecione quem está usando --</option>';
+        if (name1) select.innerHTML += `<option value="${name1}">${name1}</option>`;
+        if (name2) select.innerHTML += `<option value="${name2}">${name2}</option>`;
+    }
+
+    async function initApp() {
+        const name1 = document.getElementById('name1').value.trim();
+        const name2 = document.getElementById('name2').value.trim();
+        const selected = document.getElementById('current-user-select').value;
+        if (!name1 || !name2 || !selected) {
+            Swal.fire("Atenção", "Preencha os dois nomes e selecione quem está usando o dispositivo.", "warning");
+            return;
+        }
+        saveLoginData(name1, name2, selected);
+        await namesRef.set({ name1, name2 });
+        currentUserId = (selected === name1) ? 'me' : 'her';
+        partnerName.me = selected;
+        partnerName.her = (selected === name1) ? name2 : name1;
+        updateUIWithNames();
+        document.getElementById('login-container').style.display = 'none';
+        document.getElementById('app-container').style.display = 'block';
+        setupFirestoreListeners();
+        const targetMonth = `${currentYear}-${String(currentMonth+1).padStart(2,'0')}`;
+        await generateRecurringForMonth(targetMonth);
+        updateDashboard();
+        setupSwipe();
     }
 
     function setupSwipe() {
@@ -1155,59 +1285,24 @@
         setTimeout(updateIndicators, 100);
     }
 
-    // ========== Autenticação ==========
-    const loginContainer = document.getElementById('login-container');
-    const appContainer = document.getElementById('app-container');
-    const loginBtn = document.getElementById('login-btn');
-    const logoutBtn = document.getElementById('logoutBtn');
-
-    loginBtn.onclick = async () => {
-        const email = document.getElementById('login-email').value;
-        const password = document.getElementById('login-password').value;
-        const errorDiv = document.getElementById('login-error');
-        errorDiv.innerText = '';
-        try {
-            const userCred = await auth.signInWithEmailAndPassword(email, password);
-            const uid = userCred.user.uid;
-            if (!ALLOWED_UIDS.includes(uid)) {
-                await auth.signOut();
-                errorDiv.innerText = 'Acesso negado. Você não tem permissão.';
-                return;
-            }
-            // Login bem-sucedido
-            loginContainer.style.display = 'none';
-            appContainer.style.display = 'block';
-            currentUser = userCred.user;
-            // Carregar dados
-            setupFirestoreListeners();
-            await updateDashboard();
-            setupSwipe();
-        } catch (err) {
-            errorDiv.innerText = 'E-mail ou senha inválidos.';
-            console.error(err);
-        }
-    };
-
-    logoutBtn.onclick = async () => {
-        await auth.signOut();
+    function logout() {
         if (unsubscribeExpenses) unsubscribeExpenses();
         if (unsubscribeBudgets) unsubscribeBudgets();
         if (unsubscribeRecurring) unsubscribeRecurring();
         if (unsubscribeMeta) unsubscribeMeta();
         if (unsubscribeNames) unsubscribeNames();
         if (unsubscribeDebtors) unsubscribeDebtors();
-        loginContainer.style.display = 'flex';
-        appContainer.style.display = 'none';
-        currentUser = null;
-    };
+        document.getElementById('app-container').style.display = 'none';
+        document.getElementById('login-container').style.display = 'block';
+        currentUserId = null;
+        loadSavedLogin();
+    }
 
-    // Eventos dos controles
-    document.getElementById('global-prev-month').addEventListener('click', () => changeMonth(-1));
-    document.getElementById('global-next-month').addEventListener('click', () => changeMonth(1));
-    document.getElementById('partner1-prev-month').addEventListener('click', () => changeMonth(-1));
-    document.getElementById('partner1-next-month').addEventListener('click', () => changeMonth(1));
-    document.getElementById('partner2-prev-month').addEventListener('click', () => changeMonth(-1));
-    document.getElementById('partner2-next-month').addEventListener('click', () => changeMonth(1));
+    // Event listeners
+    document.getElementById('name1').addEventListener('input', updateUserSelect);
+    document.getElementById('name2').addEventListener('input', updateUserSelect);
+    document.getElementById('enter-app-btn').addEventListener('click', initApp);
+    document.getElementById('logoutBtn').addEventListener('click', logout);
     document.getElementById('add-expense-btn').addEventListener('click', saveExpense);
     document.getElementById('cancel-edit-btn').addEventListener('click', () => { editingDocId=null; document.getElementById('expense-form').reset(); document.getElementById('add-expense-btn').textContent='💾 Salvar'; document.getElementById('cancel-edit-btn').style.display='none'; });
     document.getElementById('split-type').addEventListener('change', () => { document.getElementById('custom-split').style.display = document.getElementById('split-type').value === 'custom-percent' ? 'block' : 'none'; });
@@ -1221,10 +1316,16 @@
     document.getElementById('clear-filters').addEventListener('click', () => { document.getElementById('filter-desc').value=''; document.getElementById('filter-category').value=''; document.getElementById('filter-payer').value=''; applyFilters(); });
     document.getElementById('manage-recurring-btn').addEventListener('click', showManageRecurring);
     document.getElementById('set-meta-btn').addEventListener('click', async () => { let newGoal = parseFloat(document.getElementById('meta-valor').value); if (isNaN(newGoal) || newGoal <= 0) newGoal = 500; await setSavingsGoal(newGoal); });
-    document.getElementById('add-debtor-btn').addEventListener('click', addDebtor);
-    document.getElementById('save-debtors-btn').addEventListener('click', saveDebtors);
     document.getElementById('start-date').valueAsDate = new Date();
     document.getElementById('custom-split').style.display = 'none';
+    document.getElementById('global-prev-month').addEventListener('click', () => changeMonth(-1));
+    document.getElementById('global-next-month').addEventListener('click', () => changeMonth(1));
+    document.getElementById('partner1-prev-month').addEventListener('click', () => changeMonth(-1));
+    document.getElementById('partner1-next-month').addEventListener('click', () => changeMonth(1));
+    document.getElementById('partner2-prev-month').addEventListener('click', () => changeMonth(-1));
+    document.getElementById('partner2-next-month').addEventListener('click', () => changeMonth(1));
+    document.getElementById('add-debtor-btn').addEventListener('click', addDebtor);
+    document.getElementById('save-debtors-btn').addEventListener('click', saveDebtors);
 
     // Tema escuro
     const themeToggle = document.getElementById('theme-toggle-btn');
@@ -1238,6 +1339,9 @@
     const styleDark = document.createElement('style');
     styleDark.textContent = `.dark-theme .card { background: rgba(0,0,0,0.6); }`;
     document.head.appendChild(styleDark);
+
+    loadSavedLogin();
+    if (document.getElementById('name1').value.trim() && document.getElementById('name2').value.trim()) updateUserSelect();
 </script>
 </body>
 </html>
